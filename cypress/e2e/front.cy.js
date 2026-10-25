@@ -74,6 +74,45 @@ describe('Casos de prueba de FRONT', () => {
     cy.get('app-my-orders table tbody tr:nth-child(2)').contains('Harry Potter and the Chamber of Secrets').should('be.visible');
   })
 
+   it('Agregar productos a la lista de favoritos correctamente | Gabriel Martinez', () => {
+    //Precondicion
+    cy.request({
+      method: 'DELETE',
+      url: 'https://app.bookdb.online/api/Wishlist/2136',
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZ2FiaW1hcnQiLCJzdWIiOiJVc2VyIiwianRpIjoiNGQxYTU0NzMtYmU1MS00NTkyLWE3ZjQtMGIxNjhmOGViMzhhIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsInVzZXJJZCI6IjIxMzYiLCJleHAiOjE3OTI5NTY4NjMsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzY0LyIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzY0LyJ9._ghReHGPbB2M6G5rOuKNMEhF2jQJAy2Fh8mTIH3x5NQ'
+      }
+    }).then((response) => {
+      expect(response.status).to.eq(200)})
+
+    //Accion paso 1:
+    cy.visit('https://app.bookdb.online/login')
+    cy.get('input[formcontrolname="username"]').type('gabimart')
+    cy.get('input[formcontrolname="password"]').type('aB123456')
+    cy.get('app-login button').contains('Login').click()
+
+    //Respuesta del sistema paso 1:
+    cy.url().should('include', 'https://app.bookdb.online/')
+    cy.get('app-book-card').contains('Harry Potter and the Chamber of Secrets').should('be.visible')
+    cy.get('#mat-badge-content-1').contains('0').should('be.visible')
+
+    //Accion paso 2:
+    cy.get('app-book-card .favourite').first().should('be.visible').click();
+
+    //Respuesta del sistema paso 2:
+    cy.get('#mat-badge-content-1').contains('1').should('be.visible')
+    cy.contains('Added to Wishlist!!!').should('be.visible')
+
+    //Accion paso 3:
+    cy.get('.mdc-icon-button.mat-mdc-icon-button.mat-mdc-button-base.mat-unthemed').contains('favorite').click()
+    
+    //Respuesta del sistema paso 3:
+    cy.url().should('include', 'https://app.bookdb.online/wishlist')
+    cy.get('app-wishlist table tbody tr').contains('a', 'Harry Potter and the Chamber of Secrets').should('be.visible');
+  })
+
   it.skip('Titulo caso de prueba 2 | Completar', () => {
   })
 
