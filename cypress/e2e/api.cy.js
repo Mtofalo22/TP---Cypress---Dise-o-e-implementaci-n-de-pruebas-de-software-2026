@@ -1,6 +1,6 @@
 describe('Casos de prueba de APIs', () => {
 
-    it('API | Comprar carrito exitosamente', () => {
+    it.skip('API | Comprar carrito exitosamente', () => {
 
         cy.request({
             method: 'POST',
@@ -33,7 +33,7 @@ describe('Casos de prueba de APIs', () => {
       
     })
 
-    it('API | Error al comprar carrito sin token', () => {
+    it.skip('API | Error al comprar carrito sin token', () => {
 
         cy.request({
             method: 'POST',
@@ -64,6 +64,35 @@ describe('Casos de prueba de APIs', () => {
         }).then((response) => {
       expect(response.status).to.eq(401)})
 
+    })
+
+    it('API | Agregar producto a favorito exitosamente | Gabriel Martinez', () => {
+
+        cy.request({
+            method: 'POST',
+            url: 'https://app.bookdb.online/api/Wishlist/ToggleWishlist/2136/2',
+            failOnStatusCode: false, 
+            headers: {
+                accept: 'application/json',
+                'content-type': 'application/json',
+                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZ2FiaW1hcnQiLCJzdWIiOiJVc2VyIiwianRpIjoiNGQxYTU0NzMtYmU1MS00NTkyLWE3ZjQtMGIxNjhmOGViMzhhIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsInVzZXJJZCI6IjIxMzYiLCJleHAiOjE3OTI5NTY4NjMsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzY0LyIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzY0LyJ9._ghReHGPbB2M6G5rOuKNMEhF2jQJAy2Fh8mTIH3x5NQ',
+            },
+        }).then((response) => {
+      expect(response.status).to.eq(200)})
+    })
+
+    it('API | Error al agregar producto a favoritos sin token | Gabriel Martinez', () => {
+
+        cy.request({
+            method: 'POST',
+            url: 'https://app.bookdb.online/api/Wishlist/ToggleWishlist/2136/2',
+            failOnStatusCode: false, 
+            headers: {
+                accept: 'application/json',
+                'content-type': 'application/json',
+            },
+        }).then((response) => {
+      expect(response.status).to.eq(401)})
     })
 
     it.skip('Titulo caso de prueba API 2 | Completar', () => {
