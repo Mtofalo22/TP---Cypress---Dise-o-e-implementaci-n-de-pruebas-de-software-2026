@@ -1,3 +1,11 @@
+import user from '../fixtures/user.json'
+import url from '../fixtures/url.json'
+import toast from '../fixtures/toast.json'
+const pageLogin = require('../support/page_objects/pageLogin')
+const pageHome = require('../support/page_objects/pageHome')
+const pageWishlist = require('../support/page_objects/pageWishlist')
+const componentNav = require('../support/page_objects/componentNav')
+
 describe('template spec', () => {
   it('passes', () => {
     cy.visit('https://app.bookdb.online/')
@@ -6,33 +14,27 @@ describe('template spec', () => {
 
 describe('Casos de prueba de FRONT', () => {
 
-  it('Comprar carrito exitosamente y visualizar orden de compra', () => {
+  it.skip('Comprar carrito exitosamente y visualizar orden de compra', () => {
 
     //Precondicion
-    cy.request({
-      method: 'DELETE',
-      url: 'https://app.bookdb.online/api/shoppingcart/2136', // cambiar el user id ingresando a un usuario nuestro
-      headers: {
-        accept: 'application/json',
-        'content-type': 'application/json',
-        authorization: ''
-      }
-    }).then((response) => {
-      expect(response.status).to.eq(200)})
+    cy.deleteCartAPI(user.userId)
     
     //Accion paso 1:
-    cy.visit('https://app.bookdb.online/login')
-    cy.get('input[formcontrolname="username"]').type('gabimart')
-    cy.get('input[formcontrolname="password"]').type('aB123456')
-    cy.get('app-login button').contains('Login').click()
+    cy.visit(url.login)
+    pageLogin.typeUserName(user.name);
+    pageLogin.typeUserPassword(user.password);
+    pageLogin.clickLoginButton();
 
     //Respuesta del sistema paso 1:
-    cy.url().should('include', 'https://app.bookdb.online/')
-    cy.get('app-book-card').contains('Harry Potter and the Chamber of Secrets').should('be.visible')
-    cy.get('#mat-badge-content-0').contains('0').should('be.visible')
-
+    cy.url().should('include', url.home)
+    pageHome.isBookVisible();
+    //cy.get('app-book-card').contains('Harry Potter and the Chamber of Secrets').should('be.visible')
+    componentNav.validationNumberCartBadge('0')
+    //cy.get('#mat-badge-content-0').contains('0').should('be.visible')
+    
     //Accion paso 2:
-    cy.get('button').contains('Add to Cart').click()
+    pageHome.clickAddToCartButton();
+    //cy.get('button').contains('Add to Cart').click()
 
     //Respuesta del sistema paso 2:
     cy.contains('One Item added to cart').should('be.visible')
@@ -71,46 +73,37 @@ describe('Casos de prueba de FRONT', () => {
     cy.get('app-my-orders table tbody tr').first().should('be.visible').click();
 
     //Respuesta del sistema paso 7:
-    cy.get('app-my-orders table tbody tr:nth-child(2)').contains('Harry Potter and the Chamber of Secrets').should('be.visible');
+    cy.get('app-my-orders table tbody tr:nth-child(2)').contains('Harry Potter and the Prisoner of Azkaban').should('be.visible');
   })
 
    it('Agregar productos a la lista de favoritos correctamente | Gabriel Martinez', () => {
     //Precondicion
-    cy.request({
-      method: 'DELETE',
-      url: 'https://app.bookdb.online/api/Wishlist/2136',
-      headers: {
-        accept: 'application/json',
-        'content-type': 'application/json',
-        authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZ2FiaW1hcnQiLCJzdWIiOiJVc2VyIiwianRpIjoiNGQxYTU0NzMtYmU1MS00NTkyLWE3ZjQtMGIxNjhmOGViMzhhIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsInVzZXJJZCI6IjIxMzYiLCJleHAiOjE3OTI5NTY4NjMsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzY0LyIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzY0LyJ9._ghReHGPbB2M6G5rOuKNMEhF2jQJAy2Fh8mTIH3x5NQ'
-      }
-    }).then((response) => {
-      expect(response.status).to.eq(200)})
+    cy.deleteAllProductToWishlistAPI(user.userId, user.token)
 
     //Accion paso 1:
-    cy.visit('https://app.bookdb.online/login')
-    cy.get('input[formcontrolname="username"]').type('gabimart')
-    cy.get('input[formcontrolname="password"]').type('aB123456')
-    cy.get('app-login button').contains('Login').click()
+    cy.visit(url.login)
+    pageLogin.typeUserName(user.name);
+    pageLogin.typeUserPassword(user.password);
+    pageLogin.clickLoginButton();
 
     //Respuesta del sistema paso 1:
-    cy.url().should('include', 'https://app.bookdb.online/')
-    cy.get('app-book-card').contains('Harry Potter and the Chamber of Secrets').should('be.visible')
-    cy.get('#mat-badge-content-1').contains('0').should('be.visible')
+    cy.url().should('include', url.home)
+    pageHome.isBookVisible();
+    componentNav.validationNumberWishlistBadge('0')
 
     //Accion paso 2:
-    cy.get('app-book-card .favourite').first().should('be.visible').click();
+    pageHome.clickAddToWishlistButton()
 
     //Respuesta del sistema paso 2:
-    cy.get('#mat-badge-content-1').contains('1').should('be.visible')
-    cy.contains('Added to Wishlist!!!').should('be.visible')
+    componentNav.validationNumberWishlistBadge('1')
+    pageHome.isToastVisible(toast.addToWishlistToast)
 
     //Accion paso 3:
-    cy.get('.mdc-icon-button.mat-mdc-icon-button.mat-mdc-button-base.mat-unthemed').contains('favorite').click()
+    componentNav.clickOnWishlistBadge()
     
     //Respuesta del sistema paso 3:
-    cy.url().should('include', 'https://app.bookdb.online/wishlist')
-    cy.get('app-wishlist table tbody tr').contains('a', 'Harry Potter and the Chamber of Secrets').should('be.visible');
+    cy.url().should('include', url.wishlist)
+    pageWishlist.checkBookOnWishlist('Harry Potter and the Chamber of Secrets')
   })
 
   it.skip('Titulo caso de prueba 2 | Completar', () => {

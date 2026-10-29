@@ -1,98 +1,27 @@
+import user from '../fixtures/user.json'
+
 describe('Casos de prueba de APIs', () => {
 
-    it.skip('API | Comprar carrito exitosamente', () => {
+    it('API | Comprar carrito exitosamente', () => {
 
-        cy.request({
-            method: 'POST',
-            url: 'https://app.bookdb.online/api/CheckOut/1058', //cambiar el user id ingresando a un usuario nuestro
-            failOnStatusCode: false, // importante para que cypress no falle automaticamente ante un error 400 o 500
-            headers: {
-                accept: 'application/json',
-                'content-type': 'application/json',
-                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQXV0byIsInN1YiI6IlVzZXIiLCJqdGkiOiI4NjcxZWY4Zi1hYTBkLTRjYTQtYTBlNC1jY2VlN2U1MjQ5YzMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcklkIjoiMTA1OCIsImV4cCI6MTc3OTM5ODU3MSwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NDQzNjQvIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NDQzNjQvIn0.PivrnMJZmkgZieyg5jgiy5wj54T58SvSo-aSw8NZd2E',
-            },
-            body:
-            {
-                "orderDetails": [
-                    {
-                        "book": {
-                            "bookId": 3,
-                            "title": "Harry Potter and the Prisoner of Azkaban",
-                            "author": "JKR",
-                            "category": "Romance",
-                            "price": 213,
-                            "coverFileName": "c63ade52-3f90-41fa-980a-1136b6ad2128HP3.jpg"
-                        },
-                        "quantity": 1
-                    }
-                ],
-                "cartTotal": 213
-            }
-        }).then((response) => {
-      expect(response.status).to.eq(200)})
+        cy.postCheckOutAPI(user.userId, user.token, 200)
       
     })
 
-    it.skip('API | Error al comprar carrito sin token', () => {
+    it('API | Error al comprar carrito sin token', () => {
 
-        cy.request({
-            method: 'POST',
-            url: 'https://app.bookdb.online/api/CheckOut/1058', //cambiar el user id ingresando a un usuario nuestro
-            failOnStatusCode: false, // importante para que cypress no falle automaticamente ante un error 400 o 500
-            headers: {
-                accept: 'application/json',
-                'content-type': 'application/json',
-                authorization: '', //este caso de prueba pedia no brindar token para que salte el error 401
-            },
-            body:
-            {
-                "orderDetails": [
-                    {
-                        "book": {
-                            "bookId": 3,
-                            "title": "Harry Potter and the Prisoner of Azkaban",
-                            "author": "JKR",
-                            "category": "Romance",
-                            "price": 213,
-                            "coverFileName": "c63ade52-3f90-41fa-980a-1136b6ad2128HP3.jpg"
-                        },
-                        "quantity": 1
-                    }
-                ],
-                "cartTotal": 213
-            }
-        }).then((response) => {
-      expect(response.status).to.eq(401)})
+        cy.postCheckOutAPI(user.userId, '', 401)
 
     })
 
     it('API | Agregar producto a favorito exitosamente | Gabriel Martinez', () => {
 
-        cy.request({
-            method: 'POST',
-            url: 'https://app.bookdb.online/api/Wishlist/ToggleWishlist/2136/2',
-            failOnStatusCode: false, 
-            headers: {
-                accept: 'application/json',
-                'content-type': 'application/json',
-                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZ2FiaW1hcnQiLCJzdWIiOiJVc2VyIiwianRpIjoiNGQxYTU0NzMtYmU1MS00NTkyLWE3ZjQtMGIxNjhmOGViMzhhIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsInVzZXJJZCI6IjIxMzYiLCJleHAiOjE3OTI5NTY4NjMsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzY0LyIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzY0LyJ9._ghReHGPbB2M6G5rOuKNMEhF2jQJAy2Fh8mTIH3x5NQ',
-            },
-        }).then((response) => {
-      expect(response.status).to.eq(200)})
+        cy.addProductToWishlistAPI(user.userId, 2, user.token, 200)
     })
 
     it('API | Error al agregar producto a favoritos sin token | Gabriel Martinez', () => {
 
-        cy.request({
-            method: 'POST',
-            url: 'https://app.bookdb.online/api/Wishlist/ToggleWishlist/2136/2',
-            failOnStatusCode: false, 
-            headers: {
-                accept: 'application/json',
-                'content-type': 'application/json',
-            },
-        }).then((response) => {
-      expect(response.status).to.eq(401)})
+        cy.addProductToWishlistAPI(user.userId, 2, '', 401)
     })
 
     it.skip('Titulo caso de prueba API 2 | Completar', () => {
