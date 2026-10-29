@@ -1,3 +1,13 @@
+import user from "../fixtures/user.json";
+import urls from "../fixtures/urls.json";
+import toast from "../fixtures/toast.json";
+const pageLogin = require("../support/page_objects/pageLogin");
+const pageHome = require("../support/page_objects/pageHome");
+const componentNav = require("../support/page_objects/componentNav");
+const pageCart = require("../support/page_objects/pageCart");
+const pageCheckOut = require("../support/page_objects/pageCheckOut");
+const pageOrders = require("../support/page_objects/pageOrders");
+
 describe("template spec", () => {
   it("passes", () => {
     cy.visit("https://app.bookdb.online/");
@@ -7,105 +17,53 @@ describe("template spec", () => {
 describe("Casos de prueba de FRONT", () => {
   it("Comprar carrito exitosamente y visualizar orden de compra", () => {
     //Precondicion
-    cy.request({
-      method: "DELETE",
-      url: "https://app.bookdb.online/api/shoppingcart/2136", 
-      headers: {
-        accept: "application/json",
-        "content-type": "application/json",
-        authorization: "",
-      },
-    }).then((response) => {
-      expect(response.status).to.eq(200);
-    });
-
+    cy.deleteCartAPI(user.userId, user.token, 200);
     //Accion paso 1:
-    cy.visit("https://app.bookdb.online/login");
-    cy.get('input[formcontrolname="username"]').type("gabimart");
-    cy.get('input[formcontrolname="password"]').type("aB123456");
-    cy.get("app-login button").contains("Login").click();
-
+    cy.visit(urls.login);
+    cy.login(user.name, user.password);
     //Respuesta del sistema paso 1:
-    cy.url().should("include", "https://app.bookdb.online/");
-    cy.get("app-book-card")
-      .contains("Harry Potter and the Chamber of Secrets")
-      .should("be.visible");
-    cy.get("#mat-badge-content-0").contains("0").should("be.visible");
-
+    cy.url().should("include", urls.home);
+    pageHome.isBookVisible("Harry Potter and the Prisoner of Azkaban");
+    componentNav.validationNumberCartBadge("0");
     //Accion paso 2:
-    cy.get("button").contains("Add to Cart").click();
-
+    pageHome.clickAddToCartButton();
     //Respuesta del sistema paso 2:
-    cy.contains("One Item added to cart").should("be.visible");
-    cy.get("#mat-badge-content-0").contains("1").should("be.visible");
-
+    pageHome.isToastVisible(toast.addToCartToast);
+    componentNav.validationNumberCartBadge("1");
     //Accion paso 3:
-    cy.get(
-      ".mdc-icon-button.mat-mdc-icon-button.mat-mdc-button-base.mat-unthemed",
-    )
-      .contains("shopping_cart")
-      .click();
-
+    componentNav.clickOnCartIcon();
     //Respuesta del sistema paso 3:
-    cy.get("app-shoppingcart table tbody tr")
-      .contains("td", "Harry Potter and the Chamber of Secrets")
-      .should("be.visible");
-
+    pageCart.bookVisibleAtCart("Harry Potter and the Prisoner of Azkaban");
     //Accion paso 4:
-    cy.get("button").contains("CheckOut").click();
-
+    pageCart.clickOnCheckOut();
     //Respuesta del sistemas paso 4:
-    cy.url().should("include", "https://app.bookdb.online/checkout");
-    cy.get("table tbody tr")
-      .contains("td", "Harry Potter and the Chamber of Secrets")
-      .should("be.visible");
-    cy.get("form").should("be.visible");
-
+    cy.url().should("include", urls.checkout);
+    pageCheckOut.isBookVisibleAtCheck(
+      "Harry Potter and the Prisoner of Azkaban",
+    );
     //Accion paso 5:
-    cy.get('input[formcontrolname="name"]').type("Rhaenyra");
-    cy.get('input[formcontrolname="addressLine1"]').type("Kingslanding");
-    cy.get('input[formcontrolname="addressLine2"]').type("Landingpage");
-    cy.get('input[formcontrolname="pincode"]').type("112345");
-    cy.get('input[formcontrolname="state"]').type("Westeros");
-
+    cy.completeCheckOutForm();
     //Accion paso 6:
-    cy.get("button").contains("Place Order").click();
-
+    pageCheckOut.clickPlaceOrderButton();
     //Respuesta del sistema paso 6:
-    cy.get("app-my-orders table tbody tr").should("have.length.at.least", 1); //Revisar
-    cy.url().should("include", "https://app.bookdb.online/myorders");
-
+    cy.url().should("include", urls.myOrders);
+    pageOrders.visibleOrder();
     //Accion paso 7:
-    cy.get("app-my-orders table tbody tr").first().should("be.visible").click();
-
+    pageOrders.clickOnFirstOrder();
     //Respuesta del sistema paso 7:
-    cy.get("app-my-orders table tbody tr:nth-child(2)")
-      .contains("Harry Potter and the Chamber of Secrets")
-      .should("be.visible");
+    pageOrders.buyedBookVisible("Harry Potter and the Prisoner of Azkaban");
   });
 
   it("Limpiar completamente el carrito - Tofalo Mauricio Oscar", () => {
     //Precondicion
-    cy.request({
-      method: "DELETE",
-      url: "https://app.bookdb.online/api/shoppingcart/4128",
-      headers: {
-        accept: "application/json",
-        "content-type": "application/json",
-        authorization: "",
-      },
-    }).then((response) => {
-      expect(response.status).to.eq(200);
-    });
+    cy.deleteCartAPI(user.userId, user.token, 200);
 
     //Accion paso 1:
-    cy.visit("https://app.bookdb.online/login");
-    cy.get('input[formcontrolname="username"]').type("maut");
-    cy.get('input[formcontrolname="password"]').type("aB123456");
-    cy.get("app-login button").contains("Login").click();
+    cy.visit(urls.login);
+    cy.login(user.name, user.password);
 
     // Respuesta del sistema paso 1:
-    cy.url().should("include", "https://app.bookdb.online/");
+    cy.url().should("include", urls.home);
     cy.get("app-book-card").contains("Slayer").should("be.visible");
 
     // Acción paso 2:
@@ -125,19 +83,20 @@ describe("Casos de prueba de FRONT", () => {
 
     //Respuesta del sistema paso 3:
     cy.get(
-      ".mdc-icon-button.mat-mdc-icon-button.mat-mdc-button-base.mat-unthemed")
+      ".mdc-icon-button.mat-mdc-icon-button.mat-mdc-button-base.mat-unthemed",
+    )
       .contains("shopping_cart")
       .click();
+
     cy.contains("One Item added to cart").should("be.visible");
+
     cy.get("app-shoppingcart table tbody tr")
       .contains("td", "Slayer")
       .should("be.visible");
 
     //Accion paso 4:
 
-    cy.get("app-shoppingcart button")
-      .contains("Clear cart")
-      .click();
+    cy.get("app-shoppingcart button").contains("Clear cart").click();
 
     //Respuesta del sistema paso 4:
     cy.get("app-shoppingcart")
