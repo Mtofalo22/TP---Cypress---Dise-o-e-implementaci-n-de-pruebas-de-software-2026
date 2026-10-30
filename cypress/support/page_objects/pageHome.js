@@ -9,6 +9,10 @@ class pageHome {
     ).click();
   }
 
+  clickAddToWishlistButton() {
+    cy.get('app-book-card .favourite').first().should('be.visible').click();
+  }
+
   isToastVisible(message) {
     cy.contains(message).should("be.visible");
   }
@@ -24,3 +28,4 @@ class pageHome {
 
 }
 module.exports = new pageHome();
+

@@ -7,6 +7,7 @@ const componentNav = require("../support/page_objects/componentNav");
 const pageCart = require("../support/page_objects/pageCart");
 const pageCheckOut = require("../support/page_objects/pageCheckOut");
 const pageOrders = require("../support/page_objects/pageOrders");
+const pageWishlist = require('../support/page_objects/pageWishlist')
 const pageDetails = require("../support/page_objects/pageDetails");
 
 describe("template spec", () => {
@@ -82,7 +83,34 @@ describe("Casos de prueba de FRONT", () => {
     pageCart.cartEmpty();
     pageHome.isToastVisible(toast.carClearedToast);
   });
+    
+   it('Agregar productos a la lista de favoritos correctamente | Gabriel Martinez', () => {
+    //Precondicion
+    cy.deleteAllProductToWishlistAPI(user.userId, user.token)
 
-  //it.only ejecutar solo ese caso de prueba
-  //it.skip no ejecuta ese caso de prueba
+    //Accion paso 1:
+    cy.visit(urls.login);
+    cy.login(user.name, user.password);
+
+    //Respuesta del sistema paso 1:
+    cy.url().should('include', urls.home)
+    pageHome.isBookVisible('Harry Potter and the Chamber of Secrets');
+    componentNav.validationNumberWishlistBadge('0')
+
+    //Accion paso 2:
+    pageHome.clickAddToWishlistButton()
+
+    //Respuesta del sistema paso 2:
+    componentNav.validationNumberWishlistBadge('1')
+    pageHome.isToastVisible(toast.addToWishlistToast)
+
+    //Accion paso 3:
+    componentNav.clickOnWishlistBadge()
+    
+    //Respuesta del sistema paso 3:
+    cy.url().should('include', urls.wishlist)
+    pageWishlist.checkBookOnWishlist('Harry Potter and the Chamber of Secrets')
+  });
+
+ 
 });

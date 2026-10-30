@@ -125,3 +125,34 @@ Cypress.Commands.add("completeCheckOutForm", () => {
   cy.get('input[formcontrolname="pincode"]').type("112345");
   cy.get('input[formcontrolname="state"]').type("Westeros");
 });
+
+Cypress.Commands.add('deleteAllProductToWishlistAPI', (userId, token) => {
+
+cy.request({
+      method: 'DELETE',
+      url: `https://app.bookdb.online/api/Wishlist/${userId}`,
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        authorization: token
+      }
+    }).then((response) => {
+      expect(response.status).to.eq(200)})
+
+})
+
+Cypress.Commands.add('addProductToWishlistAPI', (userId, numberOfBook, token, codeResponse) => {
+
+cy.request({
+            method: 'POST',
+            url: `https://app.bookdb.online/api/Wishlist/ToggleWishlist/${userId}/${numberOfBook}`,
+            failOnStatusCode: false, 
+            headers: {
+                accept: 'application/json',
+                'content-type': 'application/json',
+                authorization: token
+            },
+        }).then((response) => {
+      expect(response.status).to.eq(codeResponse)})
+
+})
