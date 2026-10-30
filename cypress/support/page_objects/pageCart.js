@@ -5,8 +5,19 @@ class PageCart {
       .should("be.visible");
   }
 
+  cartEmpty() {
+    cy.get("app-shoppingcart")
+      .contains("Your shopping cart is empty.")
+      .should("be.visible");
+  }
+
   clickOnCheckOut() {
     cy.get("button").contains("CheckOut").click();
   }
+
+  clickOnClearCart() {
+    cy.get("button").contains("Clear cart").click();
+  }
+
 }
 module.exports = new PageCart();

@@ -1,4 +1,5 @@
 {
     "addToWishlistToast": "Added to Wishlist!!!",
-    "addToCartToast": "One Item added to cart"
+    "addToCartToast": "One Item added to cart",
+    "carClearedToast": "Cart cleared"
 }

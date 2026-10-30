@@ -16,6 +16,16 @@ class pageHome {
   isToastVisible(message) {
     cy.contains(message).should("be.visible");
   }
+
+  clickOnSpecificBookCard(bookName){
+     cy.get("app-book-card")
+      .contains(bookName)
+      .parents("app-book-card")
+      .find("mat-card")
+      .click();
+  }
+
+
 }
 module.exports = new pageHome();
 
