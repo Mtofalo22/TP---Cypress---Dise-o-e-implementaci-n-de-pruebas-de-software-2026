@@ -7,6 +7,7 @@ const componentNav = require("../support/page_objects/componentNav");
 const pageCart = require("../support/page_objects/pageCart");
 const pageCheckOut = require("../support/page_objects/pageCheckOut");
 const pageOrders = require("../support/page_objects/pageOrders");
+const pageDetails = require("../support/page_objects/pageDetails");
 
 describe("template spec", () => {
   it("passes", () => {
@@ -57,51 +58,29 @@ describe("Casos de prueba de FRONT", () => {
   it("Limpiar completamente el carrito - Tofalo Mauricio Oscar", () => {
     //Precondicion
     cy.deleteCartAPI(user.userId, user.token, 200);
-
     //Accion paso 1:
     cy.visit(urls.login);
     cy.login(user.name, user.password);
-
     // Respuesta del sistema paso 1:
     cy.url().should("include", urls.home);
-    cy.get("app-book-card").contains("Slayer").should("be.visible");
-
+    pageHome.isBookVisible("Slayer");
     // Acción paso 2:
-    cy.get("app-book-card")
-      .contains("Slayer")
-      .parents("app-book-card")
-      .find("mat-card")
-      .click();
-
+    pageHome.clickOnSpecificBookCard("Slayer");
     //Respuesta del sistema paso 2:
-    cy.get("app-book-details mat-card mat-card-content")
-      .contains("Slayer")
-      .should("be.visible");
-
+    pageDetails.visibleBookDetails("Slayer");
     //accion paso 3:
-    cy.contains("button", "Add to Cart").click();
-
+    pageDetails.clickOnAddToCart();
     //Respuesta del sistema paso 3:
-    cy.get(
-      ".mdc-icon-button.mat-mdc-icon-button.mat-mdc-button-base.mat-unthemed",
-    )
-      .contains("shopping_cart")
-      .click();
-
-    cy.contains("One Item added to cart").should("be.visible");
-
-    cy.get("app-shoppingcart table tbody tr")
-      .contains("td", "Slayer")
-      .should("be.visible");
-
+    pageHome.isToastVisible(toast.addToCartToast);
     //Accion paso 4:
-
-    cy.get("app-shoppingcart button").contains("Clear cart").click();
-
+    componentNav.clickOnCartIcon();
     //Respuesta del sistema paso 4:
-    cy.get("app-shoppingcart")
-      .contains("Your shopping cart is empty.")
-      .should("be.visible");
+    pageCart.bookVisibleAtCart("Slayer");
+    //Accion paso 5:
+    pageCart.clickOnClearCart();
+    //Respuesta del sistema paso 5:
+    pageCart.cartEmpty();
+    pageHome.isToastVisible(toast.carClearedToast);
   });
 
   //it.only ejecutar solo ese caso de prueba
