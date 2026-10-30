@@ -2,6 +2,6 @@
     "login":"https://app.bookdb.online/login",
     "home":"https://app.bookdb.online",
     "checkout":"https://app.bookdb.online/checkout",
-    "myOrders":"https://app.bookdb.online/myorders"
-
+    "myOrders":"https://app.bookdb.online/myorders",
+    "wishlist": "https://app.bookdb.online/wishlist"
 }
