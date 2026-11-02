@@ -83,8 +83,8 @@ describe("Casos de prueba de FRONT", () => {
     pageCart.cartEmpty();
     pageHome.isToastVisible(toast.carClearedToast);
   });
-    
-   it('Agregar productos a la lista de favoritos correctamente | Gabriel Martinez', () => {
+
+  it('Agregar productos a la lista de favoritos correctamente | Gabriel Martinez', () => {
     //Precondicion
     cy.deleteAllProductToWishlistAPI(user.userId, user.token)
 
@@ -106,11 +106,38 @@ describe("Casos de prueba de FRONT", () => {
 
     //Accion paso 3:
     componentNav.clickOnWishlistBadge()
-    
+
     //Respuesta del sistema paso 3:
     cy.url().should('include', urls.wishlist)
     pageWishlist.checkBookOnWishlist('Harry Potter and the Chamber of Secrets')
   });
 
+  it.only('Filtrar libros por categoria | Sofia Ferrari', () => {
  
+    cy.visit(urls.home)
+    pageHome.isBookVisible('Harry Potter and the Chamber of Secrets')
+    pageHome.isFilterVisible('Biography')
+
+    pageHome.clickBookCategory('Biography')
+    pageHome.isBookVisible('Rot & Ruin')
+
+    pageHome.clickBookCategory('Fiction')
+    pageHome.isBookVisible('Harry Potter and the Goblet of Fire')
+
+    pageHome.clickBookCategory('Mystery')
+    pageHome.isBookVisible('Harry Potter and the Chamber of Secrets')
+
+    pageHome.clickBookCategory('Fantasy')
+    pageHome.isBookVisible('Harry Potter and the Half-Blood Prince')
+
+    pageHome.clickBookCategory('Romance')
+    pageHome.isBookVisible('Harry Potter and the Prisoner of Azkaban')
+
+    pageHome.clickBookCategory('Drama')
+    pageHome.isBookVisible('The Last Party')
+
+    pageHome.clickBookCategory('Tech')
+    pageHome.isBookVisible('Steve Jobs')
+  });
+
 });
