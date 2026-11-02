@@ -105,7 +105,7 @@ Cypress.Commands.add(
   (userId, idBook, token, codeResponse) => {
     cy.request({
       method: "DELETE",
-      url: `https://app.bookdb.online/api/shoppingcart/${userId}/`,
+      url: `https://app.bookdb.online/api/shoppingcart/${userId}/${idBook}`,
       failOnStatusCode: false,
       headers: {
         accept: "application/json",

@@ -19,7 +19,7 @@ describe("Casos de prueba de APIs", () => {
 
   it("API | Error al intentar eliminar un producto inexistente del carrito - Tofalo Mauricio Oscar", () => {
     cy.deleteCartAPI(user.userId, user.token, 200);
-    cy.deleteEspecificCartItemAPI(user.userId, user.token, 6, 404);
+    cy.deleteEspecificCartItemAPI(user.userId, 6 ,user.token, 404);
   });
 
   it('API | Agregar producto a favorito exitosamente | Gabriel Martinez', () => {
