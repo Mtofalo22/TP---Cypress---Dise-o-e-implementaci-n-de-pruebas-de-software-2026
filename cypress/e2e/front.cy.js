@@ -112,7 +112,7 @@ describe("Casos de prueba de FRONT", () => {
     pageWishlist.checkBookOnWishlist('Harry Potter and the Chamber of Secrets')
   });
 
-  it.only('Filtrar libros por categoria | Sofia Ferrari', () => {
+  it('Filtrar libros por categoria | Sofia Ferrari', () => {
  
     cy.visit(urls.home)
     pageHome.isBookVisible('Harry Potter and the Chamber of Secrets')

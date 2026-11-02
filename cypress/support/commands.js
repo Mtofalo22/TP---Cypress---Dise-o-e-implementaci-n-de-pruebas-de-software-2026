@@ -57,6 +57,7 @@ Cypress.Commands.add("addItemToCartAPI", (userId, token, codeResponse) => {
   cy.request({
     method: "POST",
     url: `https://app.bookdb.online/api/shoppingcart/addToCart/${userId}/6`,
+    failOnStatusCode: false,
     headers: {
       accept: "application/json",
       "content-type": "application/json",
